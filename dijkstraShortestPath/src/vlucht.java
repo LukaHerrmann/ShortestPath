@@ -6,7 +6,7 @@ public class vlucht {
     public vlucht(int bagageverlieskans, double kosten) {
         this.bagageverlieskans = bagageverlieskans;
         this.kosten = kosten;
-        this.reisWaarde = this.bagageverlieskans * this.kosten;
+        this.reisWaarde = bagageverlieskans * kosten;
     }
 
     public int getBagageverlieskans() {
