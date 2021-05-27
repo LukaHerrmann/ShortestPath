@@ -4,4 +4,8 @@ public class rit {
     public rit (double afstand) {
         this.afstand = afstand;
     }
+
+    public double getAfstand() {
+        return afstand;
+    }
 }
