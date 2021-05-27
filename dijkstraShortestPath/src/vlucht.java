@@ -1,0 +1,2 @@
+public class vlucht {
+}
