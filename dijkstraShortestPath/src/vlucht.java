@@ -16,4 +16,8 @@ public class vlucht {
     public double getKosten() {
         return kosten;
     }
+
+    public double getReisWaarde() {
+        return reisWaarde;
+    }
 }
