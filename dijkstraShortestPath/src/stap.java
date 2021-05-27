@@ -11,8 +11,8 @@ public class stap {
 
     public double getWaarde() {
         if (reismethode instanceof rit) {return ((rit) reismethode).getAfstand();}
-        if (reismethode instanceof treinrit) {return ((treinrit) reismethode).getTijdsduur();}
-        if (reismethode instanceof vlucht) {return ((vlucht) reismethode).getReisWaarde();}
+        else if (reismethode instanceof treinrit) {return ((treinrit) reismethode).getTijdsduur();}
+        else if (reismethode instanceof vlucht) {return ((vlucht) reismethode).getReisWaarde();}
         else {return -1;}
     }
 }
