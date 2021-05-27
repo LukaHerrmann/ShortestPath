@@ -7,4 +7,12 @@ public class vlucht {
         this.kosten = kosten;
     }
 
+
+    public int getBagageverlieskans() {
+        return bagageverlieskans;
+    }
+
+    public double getKosten() {
+        return kosten;
+    }
 }
