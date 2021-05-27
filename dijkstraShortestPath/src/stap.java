@@ -9,6 +9,14 @@ public class stap {
         this.eindpunt = eindpunt;
     }
 
+    public String getBeginpunt() {
+        return beginpunt;
+    }
+
+    public String getEindpunt() {
+        return eindpunt;
+    }
+
     public double getWaarde() {
         if (reismethode instanceof rit) {return ((rit) reismethode).getAfstand();}
         else if (reismethode instanceof treinrit) {return ((treinrit) reismethode).getTijdsduur();}
