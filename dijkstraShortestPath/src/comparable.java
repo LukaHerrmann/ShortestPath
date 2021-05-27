@@ -1,3 +1,3 @@
 public interface comparable {
-    int compareTo();
+    int compareTo(Object obj);
 }
