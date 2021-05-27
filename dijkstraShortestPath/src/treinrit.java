@@ -4,4 +4,8 @@ public class treinrit {
     public treinrit (double tijdsduur) {
         this.tijdsduur = tijdsduur;
     }
+
+    public double getTijdsduur() {
+        return tijdsduur;
+    }
 }
