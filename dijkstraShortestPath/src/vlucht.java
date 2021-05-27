@@ -1,15 +1,15 @@
 public class vlucht {
-    final int bagageverlieskans;
+    final double bagageverlieskans;
     final double kosten;
     final double reisWaarde;
 
-    public vlucht(int bagageverlieskans, double kosten) {
+    public vlucht(double bagageverlieskans, double kosten) {
         this.bagageverlieskans = bagageverlieskans;
         this.kosten = kosten;
-        this.reisWaarde = bagageverlieskans * kosten;
+        this.reisWaarde = kosten + kosten * bagageverlieskans;
     }
 
-    public int getBagageverlieskans() {
+    public double getBagageverlieskans() {
         return bagageverlieskans;
     }
 
