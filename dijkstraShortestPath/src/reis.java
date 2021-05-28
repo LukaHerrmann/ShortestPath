@@ -26,7 +26,7 @@ public class reis implements comparable {
     }
 
     public void dijkstra() {
-        //bron:
+        //bron: https://www.youtube.com/watch?v=pVfj6mxhdMw
         ArrayList<String> plekken = new ArrayList<String>();
         ArrayList<String> gebruiktePlekken = new ArrayList<String>();
         HashMap<String, String> voorgaandeplekken = new HashMap<String, String>();
