@@ -1,20 +1,25 @@
+import java.util.ArrayList;
+
 public class stap {
     final Object reismethode;
-    final String beginpunt;
-    final String eindpunt;
+    private ArrayList<String> plekken = new ArrayList<String>();
 
     public stap (Object reismethode, String beginpunt, String eindpunt) {
         this.reismethode = reismethode;
-        this.beginpunt = beginpunt;
-        this.eindpunt = eindpunt;
+        this.plekken.add(beginpunt);
+        this.plekken.add(eindpunt);
     }
 
     public String getBeginpunt() {
-        return beginpunt;
+        return plekken.get(0);
     }
 
     public String getEindpunt() {
-        return eindpunt;
+        return plekken.get(1);
+    }
+
+    public ArrayList<String> getPlekken() {
+        return plekken;
     }
 
     public double getWaarde() {
