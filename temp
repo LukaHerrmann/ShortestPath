@@ -1,0 +1,178 @@
+import java.util.*;
+
+public class Rush {
+    // hier wordt uitgegaan dat het bord altijd vierkant is
+    private final int size;
+    // de startstate is geformat als een string om het programma efficienter te maken
+    private final String startstate;
+    private final char borderchar = '#';
+    private final char emptychar;
+    private final int goalx;
+    private final int goaly;
+
+    private String vertical = "";
+    private String horizontal = "";
+    private String cars = "";
+    private String trucks = "";
+    private char goalcar;
+
+    private HashSet<String> next = new HashSet<String>();
+    private Queue<String> searchTree = new LinkedList<String>();
+    private Map<String, String> previousStates = new HashMap<String, String>();
+    private ArrayList<String> moves = new ArrayList<String>();
+
+    public Rush (int size, String startstate, char emptychar, int goalx, int goaly) {
+        this.size = size;
+        this.startstate = startstate;
+        this.emptychar = emptychar;
+        this.goalx = goalx;
+        this.goaly = goaly;
+        determinetypes(startstate);
+//        moveVehicle(startstate, 4, 4, 0, 1, 1);
+//        System.out.println(vertical);
+//        System.out.println(horizontal);
+//        System.out.println(cars);
+//        System.out.println(trucks);
+//        System.out.println(goalcar);
+    }
+
+    private int coordinates(int x, int y) {
+        return y * size + x;
+    }
+
+    // deze methode dient ervoor om het karakter op een gegeven locatie op te halen en het karakter
+    // voor buiten het bord terug te geven als deze coordinaten ongeldig zijn
+    private char locateCharacter(String state, int x, int y) {
+        return (0 <= x && x < size) && (0 <= y && y < size) ? state.charAt(coordinates(x, y)) : borderchar;
+    }
+
+    private int getLength(char car) {
+        return cars.contains(Character.toString(car)) ? 2 : 3;
+    }
+
+    // deze methode bepaald welke auto's horizontaal, verticaal, kort en lang zijn
+    private void determinetypes(String state) {
+        HashMap<Character, Integer> frequency = new HashMap<Character, Integer>();
+        for (int y=0; y < size; y++) {
+            HashMap<Character, Integer> frequencyline = new HashMap<Character, Integer>();
+            for (int x=0; x < size; x++) {
+                if (!frequency.containsKey(locateCharacter(state, x, y))) {
+                    frequency.put(locateCharacter(state, x, y), 1);}
+                else {frequency.put(locateCharacter(state, x, y),
+                        frequency.get(locateCharacter(state, x, y)) + 1);}
+                if (!frequencyline.containsKey(locateCharacter(state, x, y))) {
+                    frequencyline.put(locateCharacter(state, x, y), 1);}
+                else {frequencyline.put(locateCharacter(state, x, y),
+                        frequencyline.get(locateCharacter(state, x, y)) + 1);}
+            }
+            frequencyline.remove('.');
+            for (char vehicle : frequencyline.keySet()) {
+                if (frequencyline.get(vehicle) > 1) {
+                    if (!horizontal.contains(Character.toString(vehicle))) {
+                        horizontal = horizontal.concat(Character.toString(vehicle));}
+                    if (y == goaly) {goalcar = vehicle;}
+                }
+                else {
+                    if (!vertical.contains(Character.toString(vehicle))) {
+                        vertical = vertical.concat(Character.toString(vehicle));}
+                }
+            }
+        }
+        frequency.remove('.');
+        for (char vehicle : frequency.keySet()) {
+            if (frequency.get(vehicle).equals(2)) {
+                cars = cars.concat(Character.toString(vehicle));
+            }
+            else {trucks = trucks.concat(Character.toString(vehicle));}
+        }
+    }
+
+    // deze methode kijkt of de meegegeven staat van het bord al is doorgenomen en als dit niet het geval
+    // is zal deze worden toegeveogd aan de queue voor het doornemen van bord states
+    private void addToQueue(String currentState, String previousState) {
+        if (!previousStates.containsKey(currentState)) {
+            previousStates.put(currentState, previousState);
+            searchTree.add(currentState);
+        }
+    }
+
+    private boolean checkGoal(String state) {
+        return locateCharacter(state, goalx, goaly) == goalcar;
+    }
+
+    private int traceBack(String current) {
+        String prev = previousStates.get(current);
+        int step = (prev == null) ? 0 : traceBack(prev) + 1;
+        System.out.println(step);
+        System.out.println(current);
+        return step;
+    }
+
+    // deze methode kijkt hoeveel beschikbare plekken zijn in de aangegeven richting
+    // updown: + is omhoog, - omlaag
+    // leftright: + is naar links, - naar rechts
+    private int checkSpaces(String state, int x, int y, int updown, int leftright) {
+        x -= leftright;
+        y -= updown;
+        int spaces = 0;
+        while (locateCharacter(state, x, y) == emptychar) {
+            x -= leftright;
+            y -= updown;
+            spaces ++;
+        }
+        return spaces;
+    }
+
+    // deze methode verplaatst een auto en voegt de nieuwe mogelijke opstellingen toe aan de queue
+    private void moveVehicle(String state, int x, int y, int updown, int leftright, int iterations) {
+        StringBuilder mutableState = new StringBuilder(state);
+        char carToMove = locateCharacter(state, x, y);
+        int length = getLength(carToMove);
+        for (int i=0; i < iterations; i++) {
+            x -= leftright;
+            y -= updown;
+            mutableState.setCharAt(coordinates(x, y), carToMove);
+            mutableState.setCharAt(coordinates(x + length * leftright, y + length * updown), emptychar);
+            addToQueue(mutableState.toString(), state);
+            state = mutableState.toString();
+        }
+    }
+
+    private void possibleStates(String currentState) {
+        for (int y=0; y<size; y++) {
+            for (int x=0; x<size; x++) {
+                if (locateCharacter(currentState, x, y) != emptychar) {
+                    if (vertical.contains(Character.toString(locateCharacter(currentState, x, y)))) {
+                        int upspaces = checkSpaces(currentState, x, y, 1, 0);
+                        int downspaces = checkSpaces(currentState, x, y, -1, 0);
+                        moveVehicle(currentState, x, y, 1, 0, upspaces);
+                        moveVehicle(currentState, x, y, -1, 0, downspaces);
+                    }
+                    else {
+                        int leftspaces = checkSpaces(currentState, x, y, 0, 1);
+                        int rightspaces = checkSpaces(currentState, x, y, 0, -1);
+                        moveVehicle(currentState, x, y, 0, 1, leftspaces);
+                        moveVehicle(currentState, x, y, 0, -1, rightspaces);
+                    }
+                }
+            }
+        }
+    }
+
+    public void getHint() {
+        addToQueue(startstate, null);
+        boolean solved = false;
+        int i = 0;
+        while(!searchTree.isEmpty()) {
+            i++;
+            String currentState = searchTree.remove();
+            if (checkGoal(currentState) && !solved) {
+                solved = true;
+                traceBack(currentState);
+            }
+            possibleStates(currentState);
+        }
+        System.out.println(previousStates.size() + " explored");
+    }
+
+}
